@@ -1,3 +1,7 @@
+import os
+import sys
+import fileinput
+
 print("Grupo-1AN:")
 print("Kevin Manfredy Axpuac Juárez - 15006597")
 print("Antares: ")
@@ -37,38 +41,106 @@ outFile = False
 outFileName = ''
 #Numero a Convertir
 numberConvert = ''
+#Prefijos
+prefijos = {
+    8 : '0',
+    2 : '0b',
+    16 : '0x',
+    10 : ''
+}
+
 
 #Valida y convierte el número de una base a otra
 def convert():
     from validateNumberIn import validateNumberIn
     from toBase10 import toBase10
     from toBase import toBase
+    import re
+    hex = re.compile('0x[0-9A-F]+')
+    bi = re.compile('0b[0-1]+')
+    dec = re.compile('[0-9]+')
+    oct = re.compile('0[0-7]+')
     global numberConvert
     global baseInDefault
     if not baseIn:
         if len(numberConvert) > 1:
             if numberConvert[0:2] == '0x':
                 baseInDefault = 16
-        elif numberConvert[0:2] == '0b':
-            baseInDefault = 2
-        elif numberConvert[0:1] == '0':
-            baseInDefault = 8
+            elif numberConvert[0:2] == '0b':
+                baseInDefault = 2
+            elif numberConvert[0:1] == '0':
+                baseInDefault = 8
 
     if len(numberConvert) > 1:
         if numberConvert[0:2] == '0x':
             numberConvert = numberConvert[2: len(numberConvert)]
-    elif numberConvert[0:2] == '0b':
-        numberConvert = numberConvert[2: len(numberConvert)]
-    elif numberConvert[0:1] == '0':
-        numberConvert = numberConvert[1: len(numberConvert)]
+        elif numberConvert[0:2] == '0b':
+            numberConvert = numberConvert[2: len(numberConvert)]
+        elif numberConvert[0:1] == '0':
+            numberConvert = numberConvert[1: len(numberConvert)]
 
-    if validateNumberIn(numberConvert, baseInDefault):
+    if file:
+        if outFile:
+            tempFile = open(fileName, 'r+')
+            tmpFileOut = open(outFileName, 'w')
+            for line in tempFile.readlines():
+                palabra = line.split()
+                switch = []
+                for x in range(0, len(palabra)):
+                    if not baseIn:
+                        if bi.match(palabra[x]):
+                            switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                           'baseIn': 2})
+                        elif hex.match(palabra[x]):
+                            switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                           'baseIn': 16})
+                        elif dec.match(palabra[x]):
+                            switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                           'baseIn': 10})
+                        elif oct.match(palabra[x]):
+                            switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                           'baseIn': 8})
+                    else:
+                        if baseInDefault == 10:
+                            if dec.match(palabra[x]):
+                                switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                               'baseIn': baseInDefault})
+                        if baseInDefault == 8:
+                            if oc.match(palabra[x]):
+                                switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                               'baseIn': baseInDefault})
+                        if baseInDefault == 16:
+                            if hex.match(palabra[x]):
+                                switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                               'baseIn': baseInDefault})
+                        if baseInDefault == 2:
+                            if bi.match(palabra[x]):
+                                switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                               'baseIn': baseInDefault})
+                pref = ''
+                if baseOut:
+                    if baseOutDefault == 2:
+                        pref = prefijos[2]
+                    elif baseOutDefault == 16:
+                        pref = prefijos[16]
+                    elif baseOutDefault == 8:
+                        pref = prefijos[8]
+                    else:
+                        pref = prefijos[10]
+                else:
+                    pref = prefijos[10]
+                for x in range(0, len(switch)):
+                    line = line.replace(switch[x]['palabra'],pref + toBase(toBase10(switch[x]['numero'], switch[x]['baseIn']), baseOutDefault))
+                tmpFileOut.write(line)
+            tempFile.close()
+            tmpFileOut.close()
+        else:
+            print("resultado >> ERROR! archivo de salida no indicado")
+    elif validateNumberIn(numberConvert, baseInDefault):
         number = toBase(toBase10(numberConvert, baseInDefault), baseOutDefault)
         print("resultado >>", number)
     else:
         print("resultado >> ERROR! Número a convertir mal formado.")
-    if file and outFile:
-        print('Archvo')
 
 def init():
     loop = 1
@@ -178,10 +250,7 @@ def init():
                         error()
                         break
                 x += 1
-            if numberConvert != '':
-                convert()
-            else:
-                print("resultado >> ERROR! no se ingresó el número a convertir.")
+            convert()
         else:
             if commands[0] == 'convert':
                 print("resultado >> ERROR! Faltan argumentos")
