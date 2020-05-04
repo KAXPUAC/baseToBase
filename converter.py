@@ -3,7 +3,7 @@ import sys
 import fileinput
 
 print("Grupo-1AN:")
-print("Kevin Manfredy Axpuac Juárez - 15006597")
+print("Kevin Manfredy Axpuac Juárez - 15006597 - AN")
 print("Antares: ")
 def impHelp():
     print("  -baseIn <base de entrada>")
