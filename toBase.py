@@ -1,3 +1,4 @@
+#Pasa un numero decimal a otra base
 def toBase(numero: int, base: int):
     chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     if numero < 0:
