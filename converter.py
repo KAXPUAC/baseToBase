@@ -60,8 +60,13 @@ def convert():
     bi = re.compile('0b[0-1]+')
     dec = re.compile('[0-9]+')
     oct = re.compile('0[0-7]+')
-    global numberConvert
-    global baseInDefault
+
+    fName = re.compile('[A-Za-z]+[.][nbc]')
+    fName2 = re.compile('[A-Za-z]+[.][a-z]+')
+    fName3 = re.compile('[A-Za-z]+[-][0-9]+')
+    fName4 = re.compile('[A-Za-z]+')
+
+    global numberConvert, outFileName, baseInDefault
     if not baseIn:
         if len(numberConvert) > 1:
             if numberConvert[0:2] == '0x':
@@ -100,7 +105,34 @@ def convert():
             except FileNotFoundError:
                 print("resultado >> ERROR! Archivo",fileName,"no existe.")
                 return
-            tmpFileOut = open(outFileName, 'w')
+            aux = 1
+            loop = True
+
+            while loop:
+                if fName.match(outFileName):
+                    if not os.path.exists(outFileName):
+                        nameTmp = outFileName.split('.')
+                        outFileName = nameTmp[0]
+                        loop = False
+                    else:
+                        nameTmp = outFileName.split('.')
+                        outFileName = nameTmp[0] + '-' + str(aux)
+                elif fName2.match(outFileName):
+                    print("resultado >> ERROR! archivo de salida no válido")
+                    return
+                elif fName3.match(outFileName):
+                    if not os.path.exists(outFileName+'.nbc'):
+                        loop = False
+                    else:
+                        nameTmp = outFileName.split('-')
+                        outFileName = nameTmp[0] + '-' + str(aux)
+                elif fName4.match(outFileName):
+                    if not os.path.exists(outFileName+'.nbc'):
+                        loop = False
+                    else:
+                        outFileName = outFileName + '-' + str(aux)
+                aux += 1
+            tmpFileOut = open(outFileName+'.nbc', 'w')
             entro = False
             for line in tempFile.readlines():
                 palabra = line.split()
