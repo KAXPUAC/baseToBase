@@ -70,6 +70,19 @@ def convert():
                 baseInDefault = 2
             elif numberConvert[0:1] == '0':
                 baseInDefault = 8
+    else:
+        if baseInDefault == 2:
+            if not bi.match(numberConvert):
+                print("resultado >> ERROR! numero mal formado")
+                return
+        elif baseInDefault == 16:
+            if not hex.match(numberConvert):
+                print("resultado >> ERROR! numero mal formado")
+                return
+        elif baseInDefault == 8:
+            if not oct.match(numberConvert):
+                print("resultado >> ERROR! numero mal formado")
+                return
 
     if len(numberConvert) > 1:
         if numberConvert[0:2] == '0x':
