@@ -101,6 +101,7 @@ def convert():
                 print("resultado >> ERROR! Archivo",fileName,"no existe.")
                 return
             tmpFileOut = open(outFileName, 'w')
+            entro = False
             for line in tempFile.readlines():
                 palabra = line.split()
                 switch = []
@@ -148,9 +149,13 @@ def convert():
                 else:
                     pref = prefijos[10]
                 for x in range(0, len(switch)):
+                    entro = True
                     line = line.replace(switch[x]['palabra'],pref + toBase(toBase10(switch[x]['numero'], switch[x]['baseIn']), baseOutDefault))
                 tmpFileOut.write(line)
             tempFile.close()
+            if not entro:
+                os.remove(outFileName)
+                print("resultado >> ERROR! Archivo vacío")
             tmpFileOut.close()
         else:
             print("resultado >> ERROR! archivo de salida no indicado")
