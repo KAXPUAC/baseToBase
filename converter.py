@@ -7,21 +7,51 @@ print("Kevin Manfredy Axpuac Juárez - 15006597")
 print("Antares: ")
 def impHelp():
     print("  -baseIn <base de entrada>")
-    print("          convert -baseOut 16 16")
+    print("          Indica la base de entrada, de el numero a convertir")
     print("  -baseOut <base de salida>")
-    print("          convert -baseOut 16 16")
+    print("          Indica la base de salida, de el numero a convertir")
     print("  -outFile <file name>")
-    print("          convert -baseOut 16 16")
+    print("          Indica el nombre de el archivo en el que se escribira el resultado")
+    print("          convert -outFile numeros.nbc")
+    print("          convert -outFile numeros")
     print("  -file <file name>")
-    print("          convert -baseOut 16 16")
-    print("          **********************************************************")
+    print("          Indica el nombre de el archivo con el que se trabajara")
+    print("          convert -file Prueba.txt")
+    print("  quit")
+    print("          Finaliza el programa")
+    print("          *************************************************************************************************")
     print("          Nombre del Proyecto: Cambiador de Base")
     print("          Información de Proyecto:")
     print("             Convierte un número de una base a otra.")
-    print("                 Ejemplo: pasa un número de base 2 a base 10")
+    print("                 Ejemplos:")
+    print("                     Pasar un número de base 2 a base 10")
+    print("                     **************************************************************************************")
     print("                     conversor >> convert -baseOut 10 0b1100")
     print("                     resultado >> 12")
-    print("          ***********************************************************")
+    print("                     conversor >> convert -baseIn 2 0b1100")
+    print("                     resultado >> 12")
+    print("                     conversor >> convert 0b1100")
+    print("                     resultado >> 12")
+    print("                     conversor >> convert -baseIn 2 -baseOut 10 0b1100")
+    print("                     resultado >> 12")
+    print("                     **************************************************************************************")
+    print("                     Trabajar con un archivo")
+    print("                     **************************************************************************************")
+    print("                     conversor >> convert -file Prueba.txt -outFile resultado.nbc")
+    print("                     resultado >> ")
+    print("                     conversor >> convert -file Prueba.txt -outFile resultado.nbc -baseIn 2 -baseOut 5")
+    print("                     resultado >> ")
+    print("                     conversor >> convert -file Prueba.txt -outFile resultado.nbc -baseOut 5")
+    print("                     resultado >> ")
+    print("                     conversor >> convert -file Prueba.txt -outFile resultado.nbc -baseIn 2")
+    print("                     resultado >> ")
+    print("                     **************************************************************************************")
+    print("                     Pasar un número de base 16 a base 10")
+    print("                     **************************************************************************************")
+    print("                     conversor >> convert 0xF1")
+    print("                     resultado >> 241")
+    print("                     **************************************************************************************")
+    print("***********************************************************************************************************")
     print("             Kevin Manfredy Axpuac Juárez, 15006597 , IME")
     print("             Ciencias de la Computación I, Universidad Galileo, 2020")
 
@@ -51,6 +81,7 @@ prefijos = {
 
 
 #Valida y convierte el número de una base a otra
+#Valida los si existen los archivos
 def convert():
     from validateNumberIn import validateNumberIn
     from toBase10 import toBase10
@@ -89,7 +120,7 @@ def convert():
                 if not oct.match(numberConvert):
                     print("resultado >> ERROR! numero mal formado")
                     return
-
+    #Quita los prefijos para convertir unicamente los numeros
     if len(numberConvert) > 1:
         if numberConvert[0:2] == '0x':
             numberConvert = numberConvert[2: len(numberConvert)]
@@ -97,7 +128,7 @@ def convert():
             numberConvert = numberConvert[2: len(numberConvert)]
         elif numberConvert[0:1] == '0':
             numberConvert = numberConvert[1: len(numberConvert)]
-
+    #Valida si viene la bandera -file
     if file:
         if outFile:
             try:
@@ -107,7 +138,7 @@ def convert():
                 return
             aux = 1
             loop = True
-
+            #Valida si el archivo existe y devuelve un nombre de archivo que no existe
             while loop:
                 if fName.match(outFileName):
                     if not os.path.exists(outFileName):
@@ -134,6 +165,7 @@ def convert():
                 aux += 1
             tmpFileOut = open(outFileName+'.nbc', 'w')
             entro = False
+            #Lee el archivo
             for line in tempFile.readlines():
                 palabra = line.split()
                 switch = []
@@ -182,6 +214,7 @@ def convert():
                     pref = prefijos[10]
                 for x in range(0, len(switch)):
                     entro = True
+                    #reescribe la linea reemplazando los numeros a converti por los numeros convertidos
                     line = line.replace(switch[x]['palabra'],pref + toBase(toBase10(switch[x]['numero'], switch[x]['baseIn']), baseOutDefault))
                 tmpFileOut.write(line)
             tempFile.close()
@@ -195,12 +228,15 @@ def convert():
         if outFile:
             print("resultado >> ERROR! argumento -outFile no esperado")
             return
+        #convierte los numeros de una base a otra
         number = toBase(toBase10(numberConvert, baseInDefault), baseOutDefault)
         if number != '':
             print("resultado >>", number)
     else:
         print("resultado >> ERROR! Número a convertir mal formado.")
 
+#Menu de el programa
+#Interfaz con el usuario
 def init():
     loop = 1
     while loop:
