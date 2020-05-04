@@ -71,18 +71,19 @@ def convert():
             elif numberConvert[0:1] == '0':
                 baseInDefault = 8
     else:
-        if baseInDefault == 2:
-            if not bi.match(numberConvert):
-                print("resultado >> ERROR! numero mal formado")
-                return
-        elif baseInDefault == 16:
-            if not hex.match(numberConvert):
-                print("resultado >> ERROR! numero mal formado")
-                return
-        elif baseInDefault == 8:
-            if not oct.match(numberConvert):
-                print("resultado >> ERROR! numero mal formado")
-                return
+        if not file:
+            if baseInDefault == 2:
+                if not bi.match(numberConvert):
+                    print("resultado >> ERROR! numero mal formado")
+                    return
+            elif baseInDefault == 16:
+                if not hex.match(numberConvert):
+                    print("resultado >> ERROR! numero mal formado")
+                    return
+            elif baseInDefault == 8:
+                if not oct.match(numberConvert):
+                    print("resultado >> ERROR! numero mal formado")
+                    return
 
     if len(numberConvert) > 1:
         if numberConvert[0:2] == '0x':
@@ -94,7 +95,11 @@ def convert():
 
     if file:
         if outFile:
-            tempFile = open(fileName, 'r+')
+            try:
+                tempFile = open(fileName, 'r+')
+            except FileNotFoundError:
+                print("resultado >> ERROR! Archivo",fileName,"no existe.")
+                return
             tmpFileOut = open(outFileName, 'w')
             for line in tempFile.readlines():
                 palabra = line.split()
@@ -102,16 +107,16 @@ def convert():
                 for x in range(0, len(palabra)):
                     if not baseIn:
                         if bi.match(palabra[x]):
-                            switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                            switch.append({'palabra': palabra[x], 'numero': palabra[x][2:len(palabra[x])], 'baseOut': baseOutDefault,
                                            'baseIn': 2})
                         elif hex.match(palabra[x]):
-                            switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                            switch.append({'palabra': palabra[x], 'numero': palabra[x][2:len(palabra[x])], 'baseOut': baseOutDefault,
                                            'baseIn': 16})
                         elif dec.match(palabra[x]):
                             switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
                                            'baseIn': 10})
                         elif oct.match(palabra[x]):
-                            switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                            switch.append({'palabra': palabra[x], 'numero': palabra[x][1:len(palabra[x])], 'baseOut': baseOutDefault,
                                            'baseIn': 8})
                     else:
                         if baseInDefault == 10:
@@ -120,15 +125,15 @@ def convert():
                                                'baseIn': baseInDefault})
                         if baseInDefault == 8:
                             if oc.match(palabra[x]):
-                                switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                switch.append({'palabra': palabra[x], 'numero': palabra[x][1:len(palabra[x])], 'baseOut': baseOutDefault,
                                                'baseIn': baseInDefault})
                         if baseInDefault == 16:
                             if hex.match(palabra[x]):
-                                switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                switch.append({'palabra': palabra[x], 'numero': palabra[x][2:len(palabra[x])], 'baseOut': baseOutDefault,
                                                'baseIn': baseInDefault})
                         if baseInDefault == 2:
                             if bi.match(palabra[x]):
-                                switch.append({'palabra': palabra[x], 'numero': palabra[x], 'baseOut': baseOutDefault,
+                                switch.append({'palabra': palabra[x], 'numero': palabra[x][2:len(palabra[x])], 'baseOut': baseOutDefault,
                                                'baseIn': baseInDefault})
                 pref = ''
                 if baseOut:
@@ -150,8 +155,12 @@ def convert():
         else:
             print("resultado >> ERROR! archivo de salida no indicado")
     elif validateNumberIn(numberConvert, baseInDefault):
+        if outFile:
+            print("resultado >> ERROR! argumento -outFile no esperado")
+            return
         number = toBase(toBase10(numberConvert, baseInDefault), baseOutDefault)
-        print("resultado >>", number)
+        if number != '':
+            print("resultado >>", number)
     else:
         print("resultado >> ERROR! Número a convertir mal formado.")
 
